@@ -116,17 +116,13 @@ const signIn = async (
 
   const data = await _fetch<{ url: string }>(`${action}/${provider}`, {
     method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
     params: authorizationParams,
-    // @ts-expect-error
-    body: new URLSearchParams({
+    body: {
       ...options,
       csrfToken,
       callbackUrl,
       json: true
-    })
+    }
   }).catch(error => error.data)
 
   if (redirect || !isSupportingReturn) {
@@ -220,15 +216,12 @@ const signOut = async (options?: SignOutOptions) => {
   const callbackUrlFallback = getRequestURL()
   const signoutData = await _fetch<{ url: string }>('signout', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
     onRequest: ({ options }) => {
-      options.body = new URLSearchParams({
+      options.body = {
         csrfToken: csrfToken as string,
         callbackUrl: callbackUrl || callbackUrlFallback,
         json: 'true'
-      })
+      }
     }
   }).catch(error => error.data)
 
